@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f0f0f0; 
+        }
+
+        .card {
+            border-radius: 15px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+        }
+
+        .city-name {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .temperature {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .icon {
+            width: 100px;
+            height: auto;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card mt-5">
+                    <div class="card-body">
+                        <h2 class="card-title text-center">Weather App</h2>
+
+                        <div class="input-group mb-3">
+                            <select class="custom-select" id="citySelect">
+                                <option selected>Select City</option>
+                                <option value="Mumbai">Mumbai</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Bangalore">Bangalore</option>
+                                <option value="Hyderabad">Hyderabad</option>
+                                <option value="Chennai">Chennai</option>
+                                <option value="Kolkata">Kolkata</option>
+                                <option value="Pune">Pune</option>
+                                <option value="Ahmedabad">Ahmedabad</option>
+                                <option value="Jaipur">Jaipur</option>
+                                </select>
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button" id="searchButton">Search</button>
+                            </div>
+                        </div>
+
+                        <div id="weatherInfo">
+                            <h3 class="city-name"></h3>
+                            <p class="temperature"></p>
+                            <p class="description"></p>
+                            <img class="icon" src="" alt="Weather Icon">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const citySelect = document.getElementById('citySelect');
+        const searchButton = document.getElementById('searchButton');
+        const weatherInfo = document.getElementById('weatherInfo');
+
+        searchButton.addEventListener('click', () => {
+            const selectedCity = citySelect.value;
+            if (selectedCity !== "Select City") { 
+                fetchWeatherData(selectedCity);
+            }
+        });
+
+        function fetchWeatherData(city) {
+            const apiKey = 'YOUR_API_KEY'; 
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    displayWeatherData(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching weather data:', error);
+                    weatherInfo.innerHTML = '<p>An error occurred. Please try again later.</p>';
+                });
+        }
+
+        function displayWeatherData(data) {
+            const cityName = data.name;
+            const temperature = data.main.temp;
+            const description = data.weather[0].description;
+            const iconCode = data.weather[0].icon;
+            const iconUrl = `http://openweathermap.org/img/wn/${iconCode}@2x.png`;
+
+            weatherInfo.innerHTML = `
+                <h3 class="city-name">${cityName}</h3>
+                <p class="temperature">${temperature}°C</p>
+                <p class="description">${description}</p>
+                <img class="icon" src="${iconUrl}" alt="Weather Icon">
+            `;
+        }
+    </script> 
+</body>
+</html>
